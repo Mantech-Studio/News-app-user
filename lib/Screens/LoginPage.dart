@@ -78,10 +78,9 @@ class _State extends State<LoginPage> {
                         await Firebase.initializeApp();
                         await FirebaseDb().signinwithemail(
                             nameController, passwordController);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
-                        );
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(builder: (context) => HomePage()),
+                            (Route<dynamic> route) => false);
                       },
                     )),
                 Container(
