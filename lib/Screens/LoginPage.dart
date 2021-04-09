@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:news_app_user/Database.dart';
 import 'package:news_app_user/HomePage.dart';
+import 'package:news_app_user/Screens/PasswordResetPage.dart';
 import 'package:news_app_user/Screens/SignUpPage.dart';
 
 class LoginPage extends StatefulWidget {
@@ -62,7 +63,10 @@ class _State extends State<LoginPage> {
                 ),
                 FlatButton(
                   onPressed: () {
-                    //forgot password screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => PasswordReset()),
+                    );
                   },
                   textColor: Colors.blue,
                   child: Text('Forgot Password'),

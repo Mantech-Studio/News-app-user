@@ -9,6 +9,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  var uid;
+  @override
+  void initState() {
+    uid = FirebaseDb().getuid();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,7 +37,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         body: Center(
-          child: Text('Home Page'),
+          child: Text(uid.toString()),
         ));
   }
 }

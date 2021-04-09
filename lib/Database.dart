@@ -3,6 +3,9 @@ import 'package:firebase_core/firebase_core.dart';
 
 class FirebaseDb {
   FirebaseAuth auth = FirebaseAuth.instance;
+  getuid() {
+    return auth.currentUser!.uid;
+  }
 
   //Anonymous sign-in
   signinanony() async {
@@ -41,6 +44,11 @@ class FirebaseDb {
         print('Wrong password provided for that user.');
       }
     }
+  }
+
+  //Reset Password
+  Future<void> resetPassword(String email) async {
+    await auth.sendPasswordResetEmail(email: email);
   }
 
   //Sign Out
