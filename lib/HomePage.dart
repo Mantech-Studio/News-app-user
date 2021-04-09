@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app_user/Database.dart';
+import 'package:news_app_user/Screens/LoginPage.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -17,7 +18,10 @@ class _HomePageState extends State<HomePage> {
             IconButton(
               onPressed: () async {
                 FirebaseDb().signout();
-                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                );
               },
               icon: Icon(
                 Icons.logout,
