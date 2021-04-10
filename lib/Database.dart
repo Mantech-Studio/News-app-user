@@ -37,11 +37,14 @@ class FirebaseDb {
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
+      if (userCredential.user!.uid != null) {
+        return 'Login Successful';
+      }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        print('No user found for that email.');
+        return 'No user found for that email.';
       } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
+        return 'Wrong password provided for that user.';
       }
     }
   }

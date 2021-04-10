@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:news_app_user/Database.dart';
 import 'package:news_app_user/HomePage.dart';
+import 'package:news_app_user/Screens/PageControllerScreen.dart';
 import 'package:news_app_user/Screens/PasswordResetPage.dart';
 import 'package:news_app_user/Screens/SignUpPage.dart';
 
@@ -80,11 +81,14 @@ class _State extends State<LoginPage> {
                       child: Text('Login'),
                       onPressed: () async {
                         await Firebase.initializeApp();
-                        await FirebaseDb().signinwithemail(
+                        String txt = await FirebaseDb().signinwithemail(
                             nameController, passwordController);
-                        Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(builder: (context) => HomePage()),
-                            (Route<dynamic> route) => false);
+                        if (txt == 'Login Successful') {
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                  builder: (context) => PageControllerScreen()),
+                              (Route<dynamic> route) => false);
+                        }
                       },
                     )),
                 Container(

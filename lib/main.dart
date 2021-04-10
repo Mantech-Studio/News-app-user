@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app_user/HomePage.dart';
 import 'package:news_app_user/Screens/LoginPage.dart';
+import 'package:news_app_user/Screens/PageControllerScreen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -13,7 +14,7 @@ void main() async {
     ));
   } else {
     runApp(MaterialApp(
-      home: HomePage(),
+      home: PageControllerScreen(),
     ));
   }
 }
