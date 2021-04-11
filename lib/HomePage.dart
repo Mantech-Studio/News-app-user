@@ -5,11 +5,19 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:news_app_user/Screens/DataViewScreen.dart';
 
 Future<List<Photo>> fetchPhotos(http.Client client, String category) async {
   final response = await client.get(Uri.parse(
       'https://saurav.tech/NewsAPI/top-headlines/category/$category/in.json'));
+
+  // Use the compute function to run parsePhotos in a separate isolate.
+  return compute(parsePhotos, response.body);
+}
+
+Future<List<Photo>> fetchallnews(http.Client client) async {
+  final response = await client
+      .get(Uri.parse('https://saurav.tech/NewsAPI/everything/bbc-news.json'));
 
   // Use the compute function to run parsePhotos in a separate isolate.
   return compute(parsePhotos, response.body);
@@ -46,7 +54,7 @@ class Photo {
 
 class HomePage extends StatefulWidget {
   String category;
-  HomePage({this.category = 'business'});
+  HomePage({this.category = 'bbc-news'});
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -55,11 +63,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('ABC NEWS'),
-      ),
       body: FutureBuilder<List<Photo>>(
-        future: fetchPhotos(http.Client(), widget.category),
+        future: widget.category == 'bbc-news'
+            ? fetchallnews(http.Client())
+            : fetchPhotos(http.Client(), widget.category),
         builder: (context, snapshot) {
           if (snapshot.hasError) print(snapshot.error);
 
@@ -67,22 +74,31 @@ class _HomePageState extends State<HomePage> {
               ? ListView.builder(
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
-                    return Material(
-                      elevation: 20,
-                      child: Container(
-                        margin: EdgeInsets.all(10),
-                        child: ListTile(
-                          leading: Container(
-                            height: 50,
-                            width: 50,
-                            child: CachedNetworkImage(
-                              imageUrl:
-                                  snapshot.data![index].urlToImage.toString(),
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  DataViewPage(snapshot.data![index])),
+                        );
+                      },
+                      child: Material(
+                        elevation: 20,
+                        child: Container(
+                          margin: EdgeInsets.all(10),
+                          child: ListTile(
+                            leading: Container(
+                              height: 50,
+                              width: 50,
+                              child: CachedNetworkImage(
+                                imageUrl:
+                                    snapshot.data![index].urlToImage.toString(),
+                              ),
                             ),
+                            title: Text(snapshot.data![index].title.toString()),
+                            subtitle:
+                                Text(snapshot.data![index].content.toString()),
                           ),
-                          title: Text(snapshot.data![index].title.toString()),
-                          subtitle:
-                              Text(snapshot.data![index].content.toString()),
                         ),
                       ),
                     );
