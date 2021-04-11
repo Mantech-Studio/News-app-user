@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app_user/HomePage.dart';
+import 'package:news_app_user/Screens/BlogPage.dart';
 
 class CategoryPage extends StatefulWidget {
   @override
@@ -22,6 +23,15 @@ class _CategoryPageState extends State<CategoryPage> {
         CategoryButton('science', 'science'),
         CategoryButton('sports', 'sports'),
         CategoryButton('technology', 'technology'),
+        FlatButton(
+          color: Colors.blueAccent,
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => UserInformation()),
+            );
+          },
+          child: Text('Blog News'),
+        ),
       ],
     ));
   }
