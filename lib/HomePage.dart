@@ -7,6 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:news_app_user/Screens/DataViewScreen.dart';
 
+Stream<List<Photo>> getphotos(
+    Duration refreshTime, http.Client client, String category) async* {
+  while (true) {
+    await Future.delayed(refreshTime);
+    yield await fetchPhotos(client, category);
+  }
+}
+
 Future<List<Photo>> fetchPhotos(http.Client client, String category) async {
   final response = await client.get(Uri.parse(
       'https://saurav.tech/NewsAPI/top-headlines/category/$category/in.json'));
@@ -15,10 +23,17 @@ Future<List<Photo>> fetchPhotos(http.Client client, String category) async {
   return compute(parsePhotos, response.body);
 }
 
+Stream<List<Photo>> getallnews(
+    Duration refreshTime, http.Client client) async* {
+  while (true) {
+    await Future.delayed(refreshTime);
+    yield await fetchallnews(client);
+  }
+}
+
 Future<List<Photo>> fetchallnews(http.Client client) async {
   final response = await client
       .get(Uri.parse('https://saurav.tech/NewsAPI/everything/bbc-news.json'));
-
   // Use the compute function to run parsePhotos in a separate isolate.
   return compute(parsePhotos, response.body);
 }
@@ -63,10 +78,10 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<List<Photo>>(
-        future: widget.category == 'bbc-news'
-            ? fetchallnews(http.Client())
-            : fetchPhotos(http.Client(), widget.category),
+      body: StreamBuilder<List<Photo>>(
+        stream: widget.category == 'bbc-news'
+            ? getallnews(Duration(milliseconds: 10), http.Client())
+            : getphotos(Duration(seconds: 1), http.Client(), widget.category),
         builder: (context, snapshot) {
           if (snapshot.hasError) print(snapshot.error);
 
