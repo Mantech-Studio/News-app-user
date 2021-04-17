@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app_user/HomePage.dart';
 import 'package:news_app_user/Screens/BlogPage.dart';
+import 'package:news_app_user/Screens/CricketnewsPage.dart';
 
 class CategoryPage extends StatefulWidget {
   @override
@@ -27,10 +28,19 @@ class _CategoryPageState extends State<CategoryPage> {
           color: Colors.blueAccent,
           onPressed: () {
             Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => UserInformation()),
+              MaterialPageRoute(builder: (context) => NationalPage()),
             );
           },
           child: Text('Blog News'),
+        ),
+        FlatButton(
+          color: Colors.blueAccent,
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (context) => CricketNews()),
+            );
+          },
+          child: Text('Cricket News'),
         ),
       ],
     ));

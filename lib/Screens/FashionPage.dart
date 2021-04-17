@@ -1,17 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class NationalPage extends StatefulWidget {
+class FashionPage extends StatefulWidget {
   @override
-  _UserInformationState createState() => _UserInformationState();
+  _FashionPageState createState() => _FashionPageState();
 }
 
-class _UserInformationState extends State<NationalPage> {
+class _FashionPageState extends State<FashionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('National').snapshots(),
+        stream: FirebaseFirestore.instance.collection('Fashion').snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return Text(
