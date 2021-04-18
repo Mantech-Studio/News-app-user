@@ -4,6 +4,7 @@ import 'package:news_app_user/Database.dart';
 import 'package:news_app_user/HomePage.dart';
 import 'package:news_app_user/Screens/BlogPage.dart';
 import 'package:news_app_user/Screens/CategoryPage.dart';
+import 'package:news_app_user/Screens/CovidDataPage.dart';
 import 'package:news_app_user/Screens/CricketnewsPage.dart';
 import 'package:news_app_user/Screens/EntertainmentPage.dart';
 import 'package:news_app_user/Screens/FashionPage.dart';
@@ -52,7 +53,9 @@ class _PageControllerScreenState extends State<PageControllerScreen> {
                   onPressed: () async {
                     Position position = await Geolocator.getCurrentPosition(
                         desiredAccuracy: LocationAccuracy.low);
-
+                    print(position.latitude.toString() +
+                        ', ' +
+                        position.longitude.toString());
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -88,11 +91,11 @@ class _PageControllerScreenState extends State<PageControllerScreen> {
                       child: Text('Politics'),
                     ),
                   ),
-                  // Tab(
-                  //   child: Container(
-                  //     child: Text('HyperLocal'),
-                  //   ),
-                  // ),
+                  Tab(
+                    child: Container(
+                      child: Text('Covid Data'),
+                    ),
+                  ),
                   // Tab(
                   //   child: Container(
                   //     child: Text('Horoscope'),
@@ -120,6 +123,7 @@ class _PageControllerScreenState extends State<PageControllerScreen> {
               FashionPage(),
               EntertainmentPage(),
               PoliticsPage(),
+              CovidDataPage(),
             ],
           )),
     );
