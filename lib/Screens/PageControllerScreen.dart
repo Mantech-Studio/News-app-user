@@ -24,7 +24,7 @@ class _PageControllerScreenState extends State<PageControllerScreen> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 5,
+      length: 6,
       child: Scaffold(
           appBar: PreferredSize(
             preferredSize:
