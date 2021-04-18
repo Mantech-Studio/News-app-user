@@ -10,6 +10,7 @@ import 'package:news_app_user/Screens/EntertainmentPage.dart';
 import 'package:news_app_user/Screens/FashionPage.dart';
 import 'package:news_app_user/Screens/InternationalPage.dart';
 import 'package:news_app_user/Screens/LoginPage.dart';
+import 'package:news_app_user/Screens/PhoneAuth.dart';
 import 'package:news_app_user/Screens/PoliticsPage.dart';
 import 'package:news_app_user/Screens/SportsPage.dart';
 import 'package:geolocator/geolocator.dart';
@@ -21,6 +22,19 @@ class PageControllerScreen extends StatefulWidget {
 }
 
 class _PageControllerScreenState extends State<PageControllerScreen> {
+  late Position position;
+  getcurrentlocation() async {
+    position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.low);
+    print(position.latitude.toString() + ', ' + position.longitude.toString());
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getcurrentlocation();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -41,7 +55,7 @@ class _PageControllerScreenState extends State<PageControllerScreen> {
                   onPressed: () async {
                     await FirebaseDb().signout();
                     Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (context) => LoginPage()),
+                        MaterialPageRoute(builder: (context) => PhoneAuth()),
                         (Route<dynamic> route) => false);
                   },
                 ),
@@ -51,11 +65,6 @@ class _PageControllerScreenState extends State<PageControllerScreen> {
                     color: Colors.white,
                   ),
                   onPressed: () async {
-                    Position position = await Geolocator.getCurrentPosition(
-                        desiredAccuracy: LocationAccuracy.low);
-                    print(position.latitude.toString() +
-                        ', ' +
-                        position.longitude.toString());
                     Navigator.push(
                         context,
                         MaterialPageRoute(

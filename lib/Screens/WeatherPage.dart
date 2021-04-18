@@ -20,8 +20,8 @@ class _WeatherPageState extends State<WeatherPage> {
     final response = await http.get(Uri.parse(
         'https://api.openweathermap.org/data/2.5/weather?lat=${widget.position.latitude}&lon=${widget.position.longitude}&units=metric&appid=$API_KEY'));
     setState(() {
-      weather = jsonDecode(response.body);
       loading = true;
+      weather = jsonDecode(response.body);
     });
     print(weather);
     return jsonDecode(response.body);
