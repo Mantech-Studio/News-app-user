@@ -17,7 +17,7 @@ class _EntertainmentPageState extends State<EntertainmentPage> {
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection('मनोरंजन')
+            .collection('मनोरंजन ')
             .orderBy('timestamp', descending: true)
             .snapshots(),
         builder: (context, snapshot) {

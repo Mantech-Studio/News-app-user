@@ -98,7 +98,7 @@ class _PageControllerScreenState extends State<PageControllerScreen> {
                   ),
                   Tab(
                     child: Container(
-                      child: Text('Rajasthan '),
+                      child: Text('Rajasthan'),
                     ),
                   ),
                   Tab(
@@ -123,7 +123,7 @@ class _PageControllerScreenState extends State<PageControllerScreen> {
                   ),
                   Tab(
                     child: Container(
-                      child: Text('Entertainment '),
+                      child: Text('Entertainment'),
                     ),
                   ),
                   Tab(

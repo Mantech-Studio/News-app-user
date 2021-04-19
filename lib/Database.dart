@@ -97,6 +97,44 @@ class FirebaseDb {
         .catchError((error) => print("Failed to delete user: $error"));
   }
 
+  Future<Database> main1() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    return openDatabase(
+      join(await getDatabasesPath(), 'follow_db.db'),
+      onCreate: (db, version) {
+        return db.execute(
+          "CREATE TABLE follow(id TEXT PRIMARY KEY)",
+        );
+      },
+      version: 2,
+    );
+  }
+
+  Future<void> insertfollow(Database database, Bookmark bookmark) async {
+    final Database db = await database;
+    await db.insert(
+      'follow',
+      bookmark.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<List> followids(Database database) async {
+    final Database db = await database;
+    var result = await db.rawQuery("SELECT id FROM follow");
+    return result.reversed.toList();
+  }
+
+  Future<void> deletefollow(Database database, String id) async {
+    final db = await database;
+
+    await db.delete(
+      'follow',
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
+
   Future<Database> main2() async {
     WidgetsFlutterBinding.ensureInitialized();
     return openDatabase(
