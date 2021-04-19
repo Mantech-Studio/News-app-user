@@ -1,284 +1,132 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:news_app_user/Database.dart';
+import 'package:news_app_user/Screens/BlogDataPage.dart';
 
 class SportsPage extends StatefulWidget {
+  List id;
+  SportsPage(this.id);
   @override
-  _SportsPageState createState() => _SportsPageState();
+  _FashionPageState createState() => _FashionPageState();
 }
 
-class _SportsPageState extends State<SportsPage> {
+class _FashionPageState extends State<SportsPage> {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: EdgeInsets.only(top: 20, left: 20, right: 20),
-      scrollDirection: Axis.vertical,
-      physics: ScrollPhysics(),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          //Live Match Detail Box
-          Container(
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: Colors.transparent,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        width: 0.5,
+    return Scaffold(
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('खेल')
+            .orderBy('timestamp', descending: true)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Text(
+              'No Data...',
+            );
+          } else {
+            return ListView.builder(
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (context, index) {
+                  DocumentSnapshot ds = snapshot.data!.docs[index];
+                  String docid = ds.id;
+                  FirebaseDb().updatevalue(docid, 'impression');
+                  return GestureDetector(
+                    onTap: () async {
+                      await FirebaseDb().updatevalue(docid, 'views');
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  BlogDataPage(ds, widget.id)));
+                    },
+                    child: Material(
+                      elevation: 10,
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Container(
+                          margin: EdgeInsets.only(bottom: 10),
+                          padding: EdgeInsets.symmetric(vertical: 10),
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(width: 2, color: Colors.grey),
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.3,
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                      image: CachedNetworkImageProvider(
+                                          ds['image_url']),
+                                      fit: BoxFit.fill),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 20, right: 20),
+                                child: Text(
+                                  (ds['title']).toString(),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.only(left: 20, right: 20),
+                                child: Text(
+                                  (ds['description']).toString(),
+                                  maxLines: 5,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 14),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 20, right: 20),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      ds['category'],
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black.withOpacity(0.4)),
+                                    ),
+                                    Text(ds['date'],
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color:
+                                                Colors.black.withOpacity(0.4))),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'IPL',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blue),
-                          ),
-                          Text(
-                            'Live',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                        width: double.infinity,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          //Team 1 Box
-                          Container(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                    child: Row(
-                                  children: [
-                                    Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.2,
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              0.2,
-                                      decoration: BoxDecoration(),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Text('188'), //score
-                                            Text('/'),
-                                            Text('7'), //wickets
-                                          ],
-                                        ),
-                                        Text('(Overs)'), //overs
-                                      ],
-                                    )
-                                  ],
-                                )),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Text(
-                                  'Team1',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                )
-                              ],
-                            ),
-                          ),
-                          //Team 2 Box
-                          Container(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Container(
-                                    child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Text('188'), //score
-                                            Text('/'),
-                                            Text('7'), //wickets
-                                          ],
-                                        ),
-                                        Text('(Overs)'), //overs
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                    Container(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.2,
-                                      height:
-                                          MediaQuery.of(context).size.width *
-                                              0.2,
-                                      decoration: BoxDecoration(),
-                                    ),
-                                  ],
-                                )),
-                                SizedBox(
-                                  height: 10,
-                                ),
-                                Text(
-                                  'Team1',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16),
-                                )
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                          width: MediaQuery.of(context).size.width - 40,
-                          child: Text(
-                            'DC Needs' + ' 3 ' + 'Runs to win',
-                            textAlign: TextAlign.center,
-                            overflow: TextOverflow.clip,
-                            style: TextStyle(
-                                fontSize: 14, fontWeight: FontWeight.w400),
-                          )),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'T20' + ' 2 ' + 'OF ' + '60',
-                        style: TextStyle(
-                            color: Colors.black54, fontWeight: FontWeight.w400),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        'No in-person attendance',
-                        style: TextStyle(
-                            color: Colors.black54, fontWeight: FontWeight.w400),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                'CSK Bowling',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500, fontSize: 14),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                'S.Thakur' + ': ' + '2' + '/' + '49' + '(3.3)',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w400, fontSize: 12),
-                              ),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              Text('DC Batting',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 14)),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                'R.Pant' + ': ' + '11' + '*' + '(11)',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w400, fontSize: 12),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Column(
-            children: List.generate(10, (index) => NewsTile(context)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget NewsTile(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: 10),
-      height: MediaQuery.of(context).size.width * 0.25,
-      width: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            height: MediaQuery.of(context).size.width * 0.25,
-            width: MediaQuery.of(context).size.width * 0.5,
-            decoration: BoxDecoration(),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.only(top: 10),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  'This is the sample description of the image given adjacent to this text',
-                  maxLines: 4,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-                ),
-              ),
-            ),
-          ),
-        ],
+                  );
+                });
+          }
+        },
       ),
     );
   }

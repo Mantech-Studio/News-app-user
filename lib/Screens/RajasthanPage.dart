@@ -4,20 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:news_app_user/Database.dart';
 import 'package:news_app_user/Screens/BlogDataPage.dart';
 
-class EntertainmentPage extends StatefulWidget {
+class RajasthanPage extends StatefulWidget {
   List id;
-  EntertainmentPage(this.id);
+  RajasthanPage(this.id);
   @override
-  _EntertainmentPageState createState() => _EntertainmentPageState();
+  _PoliticsPageState createState() => _PoliticsPageState();
 }
 
-class _EntertainmentPageState extends State<EntertainmentPage> {
+class _PoliticsPageState extends State<RajasthanPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection('मनोरंजन')
+            .collection('राजस्थान')
             .orderBy('timestamp', descending: true)
             .snapshots(),
         builder: (context, snapshot) {

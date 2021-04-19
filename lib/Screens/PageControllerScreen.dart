@@ -2,18 +2,22 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app_user/Database.dart';
 import 'package:news_app_user/HomePage.dart';
-import 'package:news_app_user/Screens/BlogPage.dart';
-import 'package:news_app_user/Screens/CategoryPage.dart';
+import 'package:news_app_user/Screens/BookmarkPage.dart';
+import 'package:news_app_user/Screens/BuisnessPage.dart';
+import 'package:news_app_user/Screens/ChuruPage.dart';
 import 'package:news_app_user/Screens/CovidDataPage.dart';
 import 'package:news_app_user/Screens/CricketnewsPage.dart';
 import 'package:news_app_user/Screens/EntertainmentPage.dart';
-import 'package:news_app_user/Screens/FashionPage.dart';
+import 'package:news_app_user/Screens/HoroscopeNewsPage.dart';
+import 'package:news_app_user/Screens/HoroscopePage.dart';
 import 'package:news_app_user/Screens/InternationalPage.dart';
+import 'package:news_app_user/Screens/LiveScorePage.dart';
 import 'package:news_app_user/Screens/LoginPage.dart';
+import 'package:news_app_user/Screens/NationalPage.dart';
 import 'package:news_app_user/Screens/PhoneAuth.dart';
-import 'package:news_app_user/Screens/PoliticsPage.dart';
-import 'package:news_app_user/Screens/SportsPage.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:news_app_user/Screens/RajasthanPage.dart';
+import 'package:news_app_user/Screens/SportsPage.dart';
 import 'package:news_app_user/Screens/WeatherPage.dart';
 
 class PageControllerScreen extends StatefulWidget {
@@ -29,16 +33,28 @@ class _PageControllerScreenState extends State<PageControllerScreen> {
     print(position.latitude.toString() + ', ' + position.longitude.toString());
   }
 
+  late List bookmarkid = [];
+  var db;
+  var id;
+  fetchids() async {
+    db = await FirebaseDb().main2();
+    id = await FirebaseDb().bookmarksids(db);
+    for (int i = 0; i < id.length; i++) {
+      bookmarkid.add(id[i]['id']);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     getcurrentlocation();
+    fetchids();
   }
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 6,
+      length: 12,
       child: Scaffold(
           appBar: PreferredSize(
             preferredSize:
@@ -78,26 +94,11 @@ class _PageControllerScreenState extends State<PageControllerScreen> {
                 physics: ScrollPhysics(),
                 tabs: <Widget>[
                   Tab(
-                    text: 'National',
+                    text: 'Churu',
                   ),
                   Tab(
                     child: Container(
-                      child: Text('InterNational'),
-                    ),
-                  ),
-                  Tab(
-                    child: Container(
-                      child: Text('Fashion'),
-                    ),
-                  ),
-                  Tab(
-                    child: Container(
-                      child: Text('Entertainment'),
-                    ),
-                  ),
-                  Tab(
-                    child: Container(
-                      child: Text('Politics'),
+                      child: Text('Rajasthan '),
                     ),
                   ),
                   Tab(
@@ -105,21 +106,51 @@ class _PageControllerScreenState extends State<PageControllerScreen> {
                       child: Text('Covid Data'),
                     ),
                   ),
-                  // Tab(
-                  //   child: Container(
-                  //     child: Text('Horoscope'),
-                  //   ),
-                  // ),
-                  // Tab(
-                  //   child: Container(
-                  //     child: Text('Sudoku'),
-                  //   ),
-                  // ),
-                  // Tab(
-                  //   child: Container(
-                  //     child: Text('Lifestyle'),
-                  //   ),
-                  // ),
+                  Tab(
+                    child: Container(
+                      child: Text('National'),
+                    ),
+                  ),
+                  Tab(
+                    child: Container(
+                      child: Text('International '),
+                    ),
+                  ),
+                  Tab(
+                    child: Container(
+                      child: Text('Sports'),
+                    ),
+                  ),
+                  Tab(
+                    child: Container(
+                      child: Text('Entertainment '),
+                    ),
+                  ),
+                  Tab(
+                    child: Container(
+                      child: Text('Business'),
+                    ),
+                  ),
+                  Tab(
+                    child: Container(
+                      child: Text('Horoscope'),
+                    ),
+                  ),
+                  Tab(
+                    child: Container(
+                      child: Text("Today's Horoscope"),
+                    ),
+                  ),
+                  Tab(
+                    child: Container(
+                      child: Text('Bookmarks'),
+                    ),
+                  ),
+                  Tab(
+                    child: Container(
+                      child: Text('Cricket Scores'),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -127,12 +158,18 @@ class _PageControllerScreenState extends State<PageControllerScreen> {
           body: TabBarView(
             physics: ScrollPhysics(),
             children: <Widget>[
-              NationalPage(),
-              InternationalPage(),
-              FashionPage(),
-              EntertainmentPage(),
-              PoliticsPage(),
+              ChuruPage(bookmarkid),
+              RajasthanPage(bookmarkid),
               CovidDataPage(),
+              NationalPage(bookmarkid),
+              InternationalPage(bookmarkid),
+              SportsPage(bookmarkid),
+              EntertainmentPage(bookmarkid),
+              BuisnessPage(bookmarkid),
+              HoroscopeNewsPage(bookmarkid),
+              HoroscopePage(),
+              BookmarkPage(bookmarkid),
+              CricketNews(),
             ],
           )),
     );

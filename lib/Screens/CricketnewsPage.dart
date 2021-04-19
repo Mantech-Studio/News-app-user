@@ -2,14 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
-Stream<List<Cricket>> getalldata(
-    Duration refreshTime, http.Client client) async* {
-  while (true) {
-    await Future.delayed(refreshTime);
-    yield await fetchcricketnews(client);
-  }
-}
+import 'package:news_app_user/Screens/LiveScorePage.dart';
 
 Future<List<Cricket>> fetchcricketnews(http.Client client) async {
   const _api_key = "a164ce2366msh9b1254f5dba4b42p12da44jsne2d09d2454e1";
@@ -19,7 +12,7 @@ Future<List<Cricket>> fetchcricketnews(http.Client client) async {
   // Base headers for Response url
   const Map<String, String> _headers = {
     "x-rapidapi-host": "dev132-cricket-live-scores-v1.p.rapidapi.com",
-    "x-rapidapi-key": "_api_key",
+    "x-rapidapi-key": _api_key,
     "content-type": "application/json",
   };
   Uri uri = Uri.parse(_baseUrl);
@@ -106,189 +99,217 @@ class _CricketNewsState extends State<CricketNews> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: StreamBuilder<List<Cricket>>(
-        stream: getalldata(Duration(milliseconds: 10), http.Client()),
+      body: FutureBuilder<List<Cricket>>(
+        future: fetchcricketnews(http.Client()),
         builder: (context, snapshot) {
           if (snapshot.hasError) print(snapshot.error);
           return snapshot.hasData
               ? ListView.builder(
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) {
-                    return Card(
-                      child: Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            //Live Match Detail Box
-                            Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: Colors.transparent,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                      border: Border(
-                                        bottom: BorderSide(
-                                          width: 0.5,
+                    return GestureDetector(
+                      onTap: () {
+                        if (snapshot.data![index].status != 'UPCOMING') {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => LiveScorePage(
+                                      snapshot.data![index].seriesId,
+                                      snapshot.data![index].id)));
+                        }
+                      },
+                      child: Card(
+                        child: Padding(
+                          padding: EdgeInsets.all(10),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              //Live Match Detail Box
+                              Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Colors.transparent,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        border: Border(
+                                          bottom: BorderSide(
+                                            width: 0.5,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              snapshot.data![index].seriesname,
-                                              style: TextStyle(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.blue),
-                                            ),
-                                            Text(
-                                              snapshot.data![index].status,
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.green),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 10,
-                                          width: double.infinity,
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            //Team 1 Box
-                                            Container(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Container(
-                                                      child: Row(
-                                                    children: [
-                                                      Text(
-                                                        snapshot.data![index]
-                                                            .hometeam,
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 16),
-                                                      ),
-                                                      SizedBox(
-                                                        width: 30,
-                                                      ),
-                                                      Column(
-                                                        children: [
-                                                          Row(
-                                                            children: [
-                                                              Text(snapshot
-                                                                  .data![index]
-                                                                  .homescore), //score
-                                                              //wickets
-                                                            ],
-                                                          ),
-                                                          Text(snapshot
-                                                              .data![index]
-                                                              .homeovers), //overs
-                                                        ],
-                                                      )
-                                                    ],
-                                                  )),
-                                                ],
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                snapshot
+                                                    .data![index].seriesname,
+                                                style: TextStyle(
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.blue),
                                               ),
-                                            ),
-                                            //Team 2 Box
-                                            Container(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.end,
-                                                children: [
-                                                  Container(
-                                                      child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: [
-                                                      Column(
-                                                        children: [
-                                                          Row(
-                                                            children: [
-                                                              Text(snapshot
-                                                                  .data![index]
-                                                                  .awayscore), //score
-                                                              //wickets
-                                                            ],
-                                                          ),
-                                                          Text(snapshot
-                                                              .data![index]
-                                                              .awayovers), //overs
-                                                        ],
-                                                      ),
-                                                      SizedBox(
-                                                        width: 10,
-                                                      ),
-                                                      Text(
-                                                        snapshot.data![index]
-                                                            .awayteam,
-                                                        style: TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 16),
-                                                      ),
-                                                    ],
-                                                  )),
-                                                ],
+                                              Text(
+                                                snapshot.data![index].status,
+                                                style: TextStyle(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.green),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 20,
-                                        ),
-                                        Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width -
-                                                40,
-                                            child: Text(
-                                              snapshot
-                                                  .data![index].matchsummary,
-                                              textAlign: TextAlign.center,
-                                              overflow: TextOverflow.clip,
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w400),
-                                            )),
-                                        SizedBox(
-                                          height: 10,
-                                        ),
-                                        Text(
-                                          'Tap to view full match Details',
-                                          style: TextStyle(
-                                              color: Colors.black54,
-                                              fontWeight: FontWeight.w400),
-                                        ),
-                                        SizedBox(
-                                          height: 20,
-                                        ),
-                                      ],
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                            width: double.infinity,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              //Team 1 Box
+                                              Container(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                        child: Row(
+                                                      children: [
+                                                        Text(
+                                                          snapshot.data![index]
+                                                              .hometeam,
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 16),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 30,
+                                                        ),
+                                                        Column(
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                Text(snapshot
+                                                                    .data![
+                                                                        index]
+                                                                    .homescore), //score
+                                                                //wickets
+                                                              ],
+                                                            ),
+                                                            Text(snapshot
+                                                                .data![index]
+                                                                .homeovers), //overs
+                                                          ],
+                                                        )
+                                                      ],
+                                                    )),
+                                                  ],
+                                                ),
+                                              ),
+                                              //Team 2 Box
+                                              Container(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  children: [
+                                                    Container(
+                                                        child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        Column(
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                Text(snapshot
+                                                                    .data![
+                                                                        index]
+                                                                    .awayscore), //score
+                                                                //wickets
+                                                              ],
+                                                            ),
+                                                            Text(snapshot
+                                                                .data![index]
+                                                                .awayovers), //overs
+                                                          ],
+                                                        ),
+                                                        SizedBox(
+                                                          width: 10,
+                                                        ),
+                                                        Text(
+                                                          snapshot.data![index]
+                                                              .awayteam,
+                                                          style: TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 16),
+                                                        ),
+                                                      ],
+                                                    )),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                          Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width -
+                                                  40,
+                                              child: Text(
+                                                snapshot
+                                                    .data![index].matchsummary,
+                                                textAlign: TextAlign.center,
+                                                overflow: TextOverflow.clip,
+                                                style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight:
+                                                        FontWeight.w400),
+                                              )),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          snapshot.data![index].status !=
+                                                  'UPCOMING'
+                                              ? Text(
+                                                  'Tap to view full match Details',
+                                                  style: TextStyle(
+                                                      color: Colors.black54,
+                                                      fontWeight:
+                                                          FontWeight.w400),
+                                                )
+                                              : Text(
+                                                  'Match details not available',
+                                                  style: TextStyle(
+                                                      color: Colors.black54,
+                                                      fontWeight:
+                                                          FontWeight.w400),
+                                                ),
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     );
@@ -296,41 +317,6 @@ class _CricketNewsState extends State<CricketNews> {
                 )
               : Center(child: CircularProgressIndicator());
         },
-      ),
-    );
-  }
-
-  Widget NewsTile(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: 10),
-      height: MediaQuery.of(context).size.width * 0.25,
-      width: double.infinity,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            height: MediaQuery.of(context).size.width * 0.25,
-            width: MediaQuery.of(context).size.width * 0.5,
-            decoration: BoxDecoration(),
-          ),
-          SizedBox(
-            width: 10,
-          ),
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.only(top: 10),
-              child: Align(
-                alignment: Alignment.topLeft,
-                child: Text(
-                  'This is the sample description of the image given adjacent to this text',
-                  maxLines: 4,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

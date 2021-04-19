@@ -1,9 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart';
 
 class FirebaseDb {
   FirebaseAuth auth = FirebaseAuth.instance;
+
+  //Retrieving user id
   getuid() {
     return auth.currentUser!.uid;
   }
@@ -32,6 +37,16 @@ class FirebaseDb {
     return 'Account Created';
   }
 
+  //Update value
+  updatevalue(docid, cat) async {
+    CollectionReference news =
+        FirebaseFirestore.instance.collection('All News');
+    return news
+        .doc(docid)
+        .update({cat: FieldValue.increment(1)})
+        .then((value) => print("User Updated"))
+        .catchError((error) => print("Failed to update user: $error"));
+  }
   //Signin with email and Password
 
   signinwithemail(String email, String password) async {
@@ -50,6 +65,76 @@ class FirebaseDb {
     }
   }
 
+  //Add Bookmark
+  addBookmark(docid, uid, title, image, desc, date, category) {
+    CollectionReference users = FirebaseFirestore.instance
+        .collection('bookmarks')
+        .doc(uid)
+        .collection(uid);
+    return users
+        .doc(docid)
+        .set({
+          'title': title,
+          'image_url': image,
+          'description': desc,
+          'date': date,
+          'category': category,
+          'timestamp': Timestamp.now()
+        })
+        .then((value) => print("Blog Added"))
+        .catchError((error) => print("Failed to add user: $error"));
+  }
+
+  removebookmark(uid, docid) {
+    CollectionReference users = FirebaseFirestore.instance
+        .collection('bookmarks')
+        .doc(uid)
+        .collection(uid);
+    return users
+        .doc(docid)
+        .delete()
+        .then((value) => print("Blog Deleted"))
+        .catchError((error) => print("Failed to delete user: $error"));
+  }
+
+  Future<Database> main2() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    return openDatabase(
+      join(await getDatabasesPath(), 'bookmark_db.db'),
+      onCreate: (db, version) {
+        return db.execute(
+          "CREATE TABLE bookmarks(id TEXT PRIMARY KEY)",
+        );
+      },
+      version: 2,
+    );
+  }
+
+  Future<void> insertbookmark(Database database, Bookmark bookmark) async {
+    final Database db = await database;
+    await db.insert(
+      'bookmarks',
+      bookmark.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<List> bookmarksids(Database database) async {
+    final Database db = await database;
+    var result = await db.rawQuery("SELECT id FROM Bookmarks");
+    return result.reversed.toList();
+  }
+
+  Future<void> deleteBM(Database database, String id) async {
+    final db = await database;
+
+    await db.delete(
+      'bookmarks',
+      where: "id = ?",
+      whereArgs: [id],
+    );
+  }
+
   //Reset Password
   Future<void> resetPassword(String email) async {
     await auth.sendPasswordResetEmail(email: email);
@@ -59,5 +144,19 @@ class FirebaseDb {
 
   signout() async {
     await FirebaseAuth.instance.signOut();
+  }
+}
+
+class Bookmark {
+  final String id;
+
+  Bookmark({
+    required this.id,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+    };
   }
 }

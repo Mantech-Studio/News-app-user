@@ -1,23 +1,24 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app_user/Database.dart';
 import 'package:news_app_user/Screens/BlogDataPage.dart';
 
-class EntertainmentPage extends StatefulWidget {
+class ChuruPage extends StatefulWidget {
   List id;
-  EntertainmentPage(this.id);
+  ChuruPage(this.id);
   @override
-  _EntertainmentPageState createState() => _EntertainmentPageState();
+  _FashionPageState createState() => _FashionPageState();
 }
 
-class _EntertainmentPageState extends State<EntertainmentPage> {
+class _FashionPageState extends State<ChuruPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection('मनोरंजन')
+            .collection('चुरू')
             .orderBy('timestamp', descending: true)
             .snapshots(),
         builder: (context, snapshot) {

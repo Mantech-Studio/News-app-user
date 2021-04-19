@@ -4,20 +4,23 @@ import 'package:flutter/material.dart';
 import 'package:news_app_user/Database.dart';
 import 'package:news_app_user/Screens/BlogDataPage.dart';
 
-class EntertainmentPage extends StatefulWidget {
+class BookmarkPage extends StatefulWidget {
   List id;
-  EntertainmentPage(this.id);
+  BookmarkPage(this.id);
   @override
-  _EntertainmentPageState createState() => _EntertainmentPageState();
+  _BookmarkPageState createState() => _BookmarkPageState();
 }
 
-class _EntertainmentPageState extends State<EntertainmentPage> {
+class _BookmarkPageState extends State<BookmarkPage> {
+  String uid = FirebaseDb().getuid().toString();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance
-            .collection('मनोरंजन')
+            .collection('bookmarks')
+            .doc(uid)
+            .collection(uid)
             .orderBy('timestamp', descending: true)
             .snapshots(),
         builder: (context, snapshot) {
@@ -30,11 +33,9 @@ class _EntertainmentPageState extends State<EntertainmentPage> {
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (context, index) {
                   DocumentSnapshot ds = snapshot.data!.docs[index];
-                  String docid = ds.id;
-                  FirebaseDb().updatevalue(docid, 'impression');
+
                   return GestureDetector(
-                    onTap: () async {
-                      await FirebaseDb().updatevalue(docid, 'views');
+                    onTap: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
